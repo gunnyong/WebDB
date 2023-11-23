@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>함께하는 다이어리</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">	
+			<div id="wrapper" class="divided">
+					<section class="banner style1 orient-left content-align-left image-position-right fullscreen onload-image-fade-in onload-content-fade-right">
+						<div class="content">
+							<h1></h1>
+							<p class="major">이야기를 공유하세요.<br>사람들과 함께 나누어보세요.</p>
+							<ul class="actions stacked">
+								<li><a href="#first" class="button big wide smooth-scroll-middle">시작하기</a></li>
+								<li><a href="#gallery" class="button big wide smooth-scroll-middle">갤러리</a></li>
+							</ul>
+						</div>
+						<div class="image">
+							<img src="assets/img/person_1.jpg" alt="" />
+						</div>
+					</section>
+
+					<section class="spotlight style1 orient-right content-align-left image-position-center onscroll-image-fade-in" id="first">
+						<div class="content">
+						  <% if (loggedIn) { %>
+							<h2>로그아웃</h2>
+							<ul class="actions stacked">
+							  <li><a href="/logout" class="button">LOGOUT</a></li>
+							</ul>
+						  <% } else { %>
+							<h2>로그인</h2>
+							<ul class="actions stacked">
+							  <li><a href="/login" class="button">LOGIN</a></li>
+							</ul>
+						  <% } %>
+						</div>
+						<div class="image">
+						  <img src="assets/img/person_2.jpg" alt="" />
+						</div>
+					  </section>					  
+					
+					<section class="spotlight style1 orient-left content-align-right image-position-center onscroll-image-fade-in">
+						<div class="content">
+							<h2>공유하기</h2>
+							<p>당신의 이야기를 들려주세요.</p>
+							<ul class="actions stacked">
+								<li><a href="/upload" class="button">POST</a></li>
+							</ul>
+						</div>
+						<div class="image">
+							<img src="assets/img/person_3.jpg" alt="" />
+						</div>
+					</section>
+
+					<section class="spotlight style1 orient-right content-align-left image-position-center onscroll-image-fade-in">
+						<div class="content">
+							<h2>함께 보기</h2>
+							<p>사람들의 이야기</p>
+							<ul class="actions stacked">
+								<li><a href="/post" class="button">GO</a></li>
+							</ul>
+						</div>
+						<div class="image">
+							<img src="assets/img/person_1_sq.jpg" alt="" />
+						</div>
+					</section>
+
+					<section class="wrapper style1 align-center" id="gallery">
+						<div class="inner">
+							<h2>Gallery</h2>
+							<p>사진을 공유해보세요.</p>
+							<a href="/upload_photo" class="button">UPLOAD PHOTO</a>
+						</div>
+
+						<!-- Gallery -->
+						<div class="gallery style2 medium lightbox onscroll-fade-in">
+							<% photos.forEach(function(photo) { %>
+							<article>
+								<% if(photo.user_id == loggedInUserId) { %>
+									<button class="delete-comment-btn" onclick="event.stopPropagation(); deletePhoto('<%= photo.id %>')">DELETE</button>
+								<% } %>
+								<a href="<%= photo.filepath %>" class="image">
+								<img src="<%= photo.filepath %>" alt="<%= photo.title %>" />
+								</a>
+								<div class="caption">
+									<h3><%= photo.title %></h3>
+									<h4><%= photo.username %></h4>
+									<p><%= photo.uploaded_at %></p>
+								</div>
+							</article>
+							<% }) %>
+						</div>
+					</section>
+
+				
+				<!-- Footer -->
+					<footer class="wrapper style1 align-center">
+						<div class="inner">
+							<ul class="icons">
+								<li><a href="#" class="icon brands style2 fa-twitter"><span class="label">Twitter</span></a></li>
+								<li><a href="#" class="icon brands style2 fa-facebook-f"><span class="label">Facebook</span></a></li>
+								<li><a href="#" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
+								<li><a href="#" class="icon brands style2 fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+								<li><a href="#" class="icon style2 fa-envelope"><span class="label">Email</span></a></li>
+							</ul>
+							<p>&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+						</div>
+					</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			<script>
+				// 클라이언트 측 자바스크립트로 DELETE 요청을 보내는 함수
+				function deletePhoto(photoId) {
+					if(confirm('사진을 삭제하시겠습니까?')) {
+						fetch('/delete_photo/' + photoId, {
+						method: 'DELETE'
+						})
+						.then(response => {
+							return response.json();
+						})
+						.then(data => {
+							if(data.success) {
+								// 성공적으로 삭제된 경우 페이지를 새로고침하거나 UI에서 해당 사진을 제거합니다.
+								window.location.reload();
+							} else {
+								alert('Error deleting photo: ' + data.message);
+							}
+						})
+						.catch(err => {
+							console.error('Error:', err);
+						});
+					}
+				}
+			</script>
+	</body>
+</html>
